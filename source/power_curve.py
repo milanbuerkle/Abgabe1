@@ -1,36 +1,23 @@
-import numpy as np
+from load_data import load_data
+from sort import bubble_sort
 import matplotlib.pyplot as plt
 import os
 
-from sort import bubble_sort
+if __name__ == "__main__":
+    # Daten laden 
+    power_W = load_data('activity.csv')['PowerOriginal']
 
-def main():
-    # Pfad zum Ordner mit den Daten
-    data_folder = 'data'
+    # Sortieren mit Bubble Sort
+    sorted_power = bubble_sort(power_W)
     
-    # Liste aller Dateien im Ordner
-    files = os.listdir(data_folder)
-    
-    # Dictionary, um die Daten zu speichern
-    data_dict = {}
-    
-    # Einlesen der Daten aus den Dateien
-    for file in files:
-        if file.endswith('.txt'):
-            with open(os.path.join(data_folder, file), 'r') as f:
-                data = [float(line.strip()) for line in f]
-                data_dict[file] = data
-    
-    # Sortieren der Daten und Plotten der Power Curves
-    plt.figure(figsize=(10, 6))
-    
-    for file, data in data_dict.items():
-        sorted_data = bubble_sort(data)
-        plt.plot(sorted_data, label=file)
-    
-    plt.title('Power Curves')
-    plt.xlabel('Index')
-    plt.ylabel('Value')
-    plt.legend()
-    plt.grid()
+    # Power Curve plotten
+    plt.plot(sorted_power[::-1])
+
+    plt.xlabel("Time [s]")
+    plt.ylabel("Power [W]")
+    plt.title("Power Curve")
+
+    # Ordner erstellen & Speichern in einem Rutsch
+    os.makedirs("figures", exist_ok=True)
+    plt.savefig("figures/power_curve.png")
     plt.show()
